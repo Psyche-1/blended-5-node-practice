@@ -11,3 +11,18 @@ export const getProductById = async (id) => {
 export const addProduct = async (payload) => {
   return await ProductModel.create(payload);
 };
+
+export const updateProductById = async (id, payload, options = {}) => {
+    console.log(id);
+    
+    const data = await ProductModel.findByIdAndUpdate({_id:id}, payload, {
+        new: true,
+        includeResultMetadata: true,
+        ...options
+    });
+    if (!data || !data.value) {
+        return null;
+    }
+    return data.value;
+    
+  };
