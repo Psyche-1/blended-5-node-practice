@@ -6,9 +6,13 @@ import {
   updateProductById,
   deleteProductById
 } from '../services/products.js';
+import { parseFilterParams } from '../utils/parseFilterParams.js';
+
 
 export const getProductsController = async (req, res) => {
-  const products = await getProducts();
+  const filter = parseFilterParams(req.query);
+  
+  const products = await getProducts(filter);
 
   res.json({
     status: 200,
