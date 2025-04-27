@@ -1,7 +1,17 @@
 import { ProductModel } from '../db/Product.js';
 
-export const getProducts = async () => {
-  return await ProductModel.find();
+export const getProducts = async (filter = {}) => {
+  let productsQuery =  ProductModel.find();
+  if (filter.maxPrice) {
+    productsQuery = productsQuery.where("price").lte(filter.maxPrice);
+  }
+  if (filter.minPrice) {
+    productsQuery = productsQuery.where("price").gte(filter.minPrice);
+  }
+  if (filter.category) {
+    productsQuery = productsQuery.where("category").equals(filter.category);
+  }
+  return productsQuery;
 };
 
 export const getProductById = async (id) => {
