@@ -1,5 +1,5 @@
 import { ONE_DAY } from '../constants/index.js';
-import { register, login, logoutUser } from '../services/users.js';
+import { register, login, logoutUser, refreshSession } from '../services/users.js';
 
 export const registerController = async (req, res) => {
   const data = await register(req.body);
@@ -42,4 +42,19 @@ export const logoutController = async (req, res) => {
   res.clearCookie('sessionId');
 
   res.status(204).send();
+};
+
+export const refreshController = async(req, res) => {
+  const sessionId = req.cookies.sessionId;
+  const refreshToken = req.cookies.refreshToken;
+
+  const session = await refreshSession(sessionId, refreshToken);
+
+  setUpSession(res, session);
+
+  res.json({
+    status: 200,
+    message: 'Successfully refresh session',
+    data: { accessToken: session.accessToken }
+  });
 };
