@@ -5,6 +5,9 @@ import SessionCollection from '../db/models/Session.js';
 import { FIFTEEN_MINUTES, ONE_DAY } from '../constants/index.js';
 import { randomBytes } from 'node:crypto';
 
+export const findSession = (query) => SessionCollection.findOne(query);
+
+export const findUser = (query) => UserCollection.findOne(query);
 
 export const register = async (payload) => {
   const { email, password } = payload;
@@ -24,11 +27,10 @@ export const register = async (payload) => {
   return newUser;
 };
 
-export const login = async(payload )=> {
-   const user = await UserCollection.findOne({ email:payload.email });
+export const login = async (payload) => {
+  const user = await UserCollection.findOne({ email: payload.email });
   if (!user) {
     throw createHttpError(404, 'User not found');
-
   }
 
   const isValidPassword = await bcrypt.compare(payload.password, user.password);
@@ -48,4 +50,8 @@ export const login = async(payload )=> {
     accessTokenValidUntil: new Date(Date.now() + FIFTEEN_MINUTES),
     refreshTokenValidUntil: new Date(Date.now() + ONE_DAY),
   });
+};
+
+export const logoutUser = async (sessionId) => {
+  return await SessionCollection.deleteOne({ _id: sessionId });
 };
